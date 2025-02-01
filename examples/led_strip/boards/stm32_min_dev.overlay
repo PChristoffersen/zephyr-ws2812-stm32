@@ -1,0 +1,50 @@
+/*
+ * Copyright (c) 2025 Peter Christoffersen
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+#include <zephyr/dt-bindings/led/led.h>
+
+/ {
+    aliases {
+        led-strip = &led_strip;
+    };
+
+    led_strip: led_strip {
+        compatible = "worldsemi,ws2812-stm32";
+        status = "okay";
+
+        pwms = <&pwm1 1 PWM_NSEC(1250) 0>;
+        //one-pulse = <800>;
+        //zero-pulse = <400>;
+
+        // Use channel 2 of DMA1
+        dmas = <&dma1 2 0>;
+        dma-names = "led-strip";
+        //dma-buffer-size = <4>;
+
+        // Uncomment the following line to enable async mode
+        // Async mode allocates a buffer of chain-length * sizeof(struct led_rgb) in the driver
+        //async;
+
+        chain-length = <16>;
+		color-mapping =	<
+            LED_COLOR_ID_GREEN
+            LED_COLOR_ID_RED
+            LED_COLOR_ID_BLUE>;
+    };
+};
+
+&dma1 {
+    status = "okay";
+};
+
+&timers1 {
+    status = "okay";
+
+    pwm1: pwm {
+        status = "okay";
+		pinctrl-0 = <&tim1_ch1_pwm_out_pa8>;
+		pinctrl-names = "default";
+    };
+};

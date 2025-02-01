@@ -1,0 +1,6 @@
+name: ws2812-stm32
+build:
+  cmake: .
+  kconfig: Kconfig
+  settings:
+    dts_root: .

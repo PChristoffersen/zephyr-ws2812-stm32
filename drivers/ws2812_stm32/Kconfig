@@ -1,0 +1,23 @@
+# Copyright (c) 2025 Peter Christoffersen
+# SPDX-License-Identifier: Apache-2.0
+
+module = WS2812_STM32
+module-str = WS2812 LED strip STM32 timer driver
+source "subsys/logging/Kconfig.template.log_config"
+
+
+config WS2812_STM32
+    bool "WS2812 LED strip STM32 timer driver"
+    default y
+	depends on DT_HAS_WORLDSEMI_WS2812_STM32_ENABLED
+    depends on DT_HAS_ST_STM32_TIMERS_ENABLED
+    depends on SOC_FAMILY_STM32
+	select USE_STM32_LL_TIM
+    select DMA
+    select PWM
+
+config WS2812_STM32_INIT_PRIORITY
+	int "WS2812 LED strip initialization priority"
+	default 90
+	help
+	  System initialization priority for LED strip drivers.

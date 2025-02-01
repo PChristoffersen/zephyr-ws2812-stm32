@@ -1,0 +1,63 @@
+# Copyright (c) 2025 Peter Christoffersen
+# SPDX-License-Identifier: Apache-2.0
+
+description: |
+  Worldsemi WS2812 LED strip, STM32 Timer binding
+
+  Driver bindings for controlling a WS2812 or compatible LED
+  strip with a STM32 Timer and DMA.
+
+  The driver uses a PWM signal to generate the WS2812 signal by
+  using DMA to write the correct PWM values to the STM32 Timer
+  every period.
+
+  The dma-buffer uses one 16 bit integers per bit of pixel data, 
+  so in the default configuration, the driver uses:
+  4 * 3 * 16 = 192 bytes of RAM for the buffer.
+
+  If interrupt latency is good it may be possible to get away 
+  with a buffer size of 2, but we need to be able to fill the
+  DMA buffer in: period * 3 * 8 ns. So if the period is 1250 ns
+  we have 30 us to process the DMA interrupt.
+
+compatible: "worldsemi,ws2812-stm32"
+
+include: [base.yaml, ws2812.yaml]
+
+properties:
+
+  pwms:
+    required: true
+    type: phandle-array
+    description: PWM controller phandle
+
+  dmas:
+    required: true
+    description: DMA controller phandle
+  dma-names:
+    required: true
+    description: DMA channel name
+
+  one-pulse:
+    type: int
+    default: 800
+    description: Period for a 1 pulse in nanoseconds
+
+  zero-pulse:
+    type: int
+    default: 400
+    description: Period for a 0 pulse in nanoseconds
+
+  dma-buffer-size:
+    type: int
+    default: 4
+    description: |
+      DMA buffer size in pixels.
+      Each pixel requires one 16 bit integer per color channel (RGB) of ram.
+
+  async:
+    type: boolean
+    description: |
+      If true, the driver will use an async API to write the pixels to the strip.
+      This will allow the driver to return before the DMA transfer is complete.
+      A buffer will be used to store the pixel data until the DMA transfer is complete.
