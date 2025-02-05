@@ -10,6 +10,7 @@
 #include <stm32_ll_rcc.h>
 #include <stm32_ll_tim.h>
 #include <stm32_ll_dma.h>
+#include <zephyr/version.h>
 #include <zephyr/kernel.h>
 #include <zephyr/device.h>
 #include <zephyr/drivers/led_strip.h>
@@ -458,6 +459,7 @@ static int ws2812_stm32_init(const struct device *dev)
 };
 
 
+#if ZEPHYR_VERSION_CODE >= ZEPHYR_VERSION(4,1,0)
 static DEVICE_API(led_strip, ws2812_stm32_api) = {
 	.update_rgb = ws2812_stm32_update_rgb,
 	.length = ws2812_stm32_length,
@@ -467,6 +469,16 @@ static DEVICE_API(led_strip, ws2812_stm32_api_async) = {
 	.update_rgb = ws2812_stm32_update_rgb_async,
 	.length = ws2812_stm32_length,
 };
+#else
+static const struct  led_strip_driver_api __unused ws2812_stm32_api = {
+	.update_rgb = ws2812_stm32_update_rgb,
+	.length = ws2812_stm32_length,
+};
+static const struct led_strip_driver_api __unused ws2812_stm32_api_async = {
+	.update_rgb = ws2812_stm32_update_rgb_async,
+	.length = ws2812_stm32_length,
+};
+#endif
 
 
 #define WS2812_STM32_TIMER(idx)	\
