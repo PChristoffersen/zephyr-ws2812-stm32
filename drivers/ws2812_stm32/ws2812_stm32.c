@@ -459,7 +459,7 @@ static int ws2812_stm32_init(const struct device *dev)
 };
 
 
-#if ZEPHYR_VERSION_CODE >= ZEPHYR_VERSION(4,1,0)
+#if ZEPHYR_VERSION_CODE >= ZEPHYR_VERSION(4,0,99)
 static DEVICE_API(led_strip, ws2812_stm32_api) = {
 	.update_rgb = ws2812_stm32_update_rgb,
 	.length = ws2812_stm32_length,
